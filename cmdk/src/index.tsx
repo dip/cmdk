@@ -785,7 +785,7 @@ const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>((props, forwa
  * All props are forwarded to the underyling `input` element.
  */
 const Input = React.forwardRef<HTMLInputElement, InputProps>((props, forwardedRef) => {
-  const { onValueChange, ...etc } = props
+  const { onValueChange, role = "combobox", ...etc } = props
   const isControlled = props.value != null
   const store = useStore()
   const search = useCmdk((state) => state.search)
@@ -807,7 +807,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, forwardedRe
       autoCorrect="off"
       spellCheck={false}
       aria-autocomplete="list"
-      role="combobox"
+      role={role}
       aria-expanded={true}
       aria-controls={context.listId}
       aria-labelledby={context.labelId}
