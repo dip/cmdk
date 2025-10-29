@@ -6,8 +6,6 @@
 
 ⌘K is a command menu React component that can also be used as an accessible combobox. You render items, it filters and sorts them automatically. ⌘K supports a fully composable API <sup><sup>[How?](/ARCHITECTURE.md)</sup></sup>, so you can wrap items in other components or even as static JSX.
 
-Demo and examples: [cmdk.paco.me](https://cmdk.paco.me)
-
 ## Install
 
 ```bash
