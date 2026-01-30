@@ -886,6 +886,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>((props, forwardedRe
       <RadixDialog.Portal container={container}>
         <RadixDialog.Overlay cmdk-overlay="" className={overlayClassName} />
         <RadixDialog.Content aria-label={props.label} cmdk-dialog="" className={contentClassName}>
+          <RadixDialog.Title style={srOnlyStyles}>{props.label || 'Command Menu'}</RadixDialog.Title>
           <Command ref={forwardedRef} {...etc} />
         </RadixDialog.Content>
       </RadixDialog.Portal>
