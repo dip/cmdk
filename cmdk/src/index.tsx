@@ -302,7 +302,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
         }
 
         // Batch this, multiple items can mount in one pass
-        // and we should not be filtering/sorting/emitting each time
+        // and we should not be filtering/sorting/emitting until all items have mounted
         schedule(3, () => {
           filterItems()
           sort()
@@ -321,12 +321,12 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
           state.current.filtered.items.delete(id)
           const selectedItem = getSelectedItem()
 
-          // Batch this, multiple items could be removed in one pass
+          // Batch this, multiple items could be removed in one pass and we should only
+          // update/filter/sort/emit once all of those updates are complete
           schedule(4, () => {
             filterItems()
 
-            // The item removed have been the selected one,
-            // so selection should be moved to the first
+            // The item removed have been the selected one, so selection should be moved to the first
             if (selectedItem?.getAttribute('id') === id) selectFirstItem()
 
             store.emit()
@@ -348,9 +348,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
         return propsRef.current.shouldFilter
       },
       label: label || props['aria-label'],
-      getDisablePointerSelection: () => {
-        return propsRef.current.disablePointerSelection
-      },
+      getDisablePointerSelection: () => propsRef.current.disablePointerSelection,
       listId,
       inputId,
       labelId,
@@ -392,8 +390,6 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
     })
 
     // Sort items within groups to bottom
-    // Sort items outside of groups
-    // Sort groups to bottom (pushes all non-grouped items to the top)
     const listInsertionElement = listInnerRef.current
 
     // Sort the items
@@ -418,9 +414,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
     groups
       .sort((a, b) => b[1] - a[1])
       .forEach((group) => {
-        const element = listInnerRef.current?.querySelector(
-          `${GROUP_SELECTOR}[${VALUE_ATTR}="${encodeURIComponent(group[0])}"]`,
-        )
+        const element = listInnerRef.current?.querySelector(`${GROUP_SELECTOR}[${VALUE_ATTR}="${group[0]}"]`)
         element?.parentElement.appendChild(element)
       })
   }
@@ -514,8 +508,8 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
         index + change < 0
           ? items[items.length - 1]
           : index + change === items.length
-          ? items[0]
-          : items[index + change]
+            ? items[0]
+            : items[index + change]
     }
 
     if (newSelected) store.setState('value', newSelected.getAttribute(VALUE_ATTR))
@@ -579,60 +573,57 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
       onKeyDown={(e) => {
         etc.onKeyDown?.(e)
 
-        // Check if IME composition is finished before triggering key binds
-        // This prevents unwanted triggering while user is still inputting text with IME
-        // e.keyCode === 229 is for the CJK IME with Legacy Browser [https://w3c.github.io/uievents/#determine-keydown-keyup-keyCode]
-        // isComposing is for the CJK IME with Modern Browser [https://developer.mozilla.org/en-US/docs/Web/API/CompositionEvent/isComposing]
-        const isComposing = e.nativeEvent.isComposing || e.keyCode === 229
-
-        if (e.defaultPrevented || isComposing) {
-          return
-        }
-
-        switch (e.key) {
-          case 'n':
-          case 'j': {
-            // vim keybind down
-            if (vimBindings && e.ctrlKey) {
+        if (!e.defaultPrevented) {
+          switch (e.key) {
+            case 'n':
+            case 'j': {
+              // vim keybinds
+              if (vimBindings && e.ctrlKey) {
+                next(e)
+              }
+              break
+            }
+            case 'ArrowDown': {
               next(e)
+              break
             }
-            break
-          }
-          case 'ArrowDown': {
-            next(e)
-            break
-          }
-          case 'p':
-          case 'k': {
-            // vim keybind up
-            if (vimBindings && e.ctrlKey) {
+            case 'p':
+            case 'k': {
+              // vim keybinds
+              if (vimBindings && e.ctrlKey) {
+                prev(e)
+              }
+              break
+            }
+            case 'ArrowUp': {
               prev(e)
+              break
             }
-            break
-          }
-          case 'ArrowUp': {
-            prev(e)
-            break
-          }
-          case 'Home': {
-            // First item
-            e.preventDefault()
-            updateSelectedToIndex(0)
-            break
-          }
-          case 'End': {
-            // Last item
-            e.preventDefault()
-            last()
-            break
-          }
-          case 'Enter': {
-            // Trigger item onSelect
-            e.preventDefault()
-            const item = getSelectedItem()
-            if (item) {
-              const event = new Event(SELECT_EVENT)
-              item.dispatchEvent(event)
+            case 'Home': {
+              // First item
+              e.preventDefault()
+              updateSelectedToIndex(0)
+              break
+            }
+            case 'End': {
+              // Last item
+              e.preventDefault()
+              last()
+              break
+            }
+            case 'Enter': {
+              // Check if IME composition is finished before triggering onSelect
+              // e.keyCode === 229 is for the Japanese IME and Safari.
+              // isComposing does not work with Japanese IME and Safari combination.
+              if (!e.nativeEvent.isComposing && e.keyCode !== 229) {
+                // Trigger item onSelect
+                e.preventDefault()
+                const item = getSelectedItem()
+                if (item) {
+                  const event = new Event(SELECT_EVENT)
+                  item.dispatchEvent(event)
+                }
+              }
             }
           }
         }
@@ -701,7 +692,7 @@ const Item = React.forwardRef<HTMLDivElement, ItemProps>((props, forwardedRef) =
 
   if (!render) return null
 
-  const { disabled, value: _, onSelect: __, forceMount: ___, keywords: ____, ...etc } = props
+  const { disabled, value: _, onSelect: __, keywords: ___, ...etc } = props
 
   return (
     <Primitive.div
@@ -886,6 +877,7 @@ const Dialog = React.forwardRef<HTMLDivElement, DialogProps>((props, forwardedRe
       <RadixDialog.Portal container={container}>
         <RadixDialog.Overlay cmdk-overlay="" className={overlayClassName} />
         <RadixDialog.Content aria-label={props.label} cmdk-dialog="" className={contentClassName}>
+          <RadixDialog.Title style={srOnlyStyles}>{props.label || 'Command Menu'}</RadixDialog.Title>
           <Command ref={forwardedRef} {...etc} />
         </RadixDialog.Content>
       </RadixDialog.Portal>
