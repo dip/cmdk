@@ -66,7 +66,7 @@ type GroupProps = Children &
     /** Whether this group is forcibly rendered regardless of filtering. */
     forceMount?: boolean
   }
-type InputProps = Omit<React.ComponentPropsWithoutRef<typeof Primitive.input>, 'value' | 'onChange' | 'type'> & {
+type InputProps = Omit<React.ComponentPropsWithoutRef<typeof Primitive.input>, 'value' | 'onChange'> & {
   /**
    * Optional controlled state for the value of the search input.
    */
@@ -74,7 +74,8 @@ type InputProps = Omit<React.ComponentPropsWithoutRef<typeof Primitive.input>, '
   /**
    * Event handler called when the search value changes.
    */
-  onValueChange?: (search: string) => void
+  onValueChange?: (search: string) => void,
+  type?: React.InputHTMLAttributes<HTMLInputElement>['type']
 }
 type CommandFilter = (value: string, search: string, keywords?: string[]) => number
 type CommandProps = Children &
@@ -288,7 +289,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
           })
         }
       },
-      // Track item lifecycle (mount, unmount)
+      // Track item lifecycle(mount, unmount)
       item: (id, groupId) => {
         allItems.current.add(id)
 
@@ -333,6 +334,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
           })
         }
       },
+
       // Track group lifecycle (mount, unmount)
       group: (id) => {
         if (!allGroups.current.has(id)) {
@@ -514,8 +516,8 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
         index + change < 0
           ? items[items.length - 1]
           : index + change === items.length
-          ? items[0]
-          : items[index + change]
+            ? items[0]
+            : items[index + change]
     }
 
     if (newSelected) store.setState('value', newSelected.getAttribute(VALUE_ATTR))
@@ -785,7 +787,7 @@ const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>((props, forwa
  * All props are forwarded to the underyling `input` element.
  */
 const Input = React.forwardRef<HTMLInputElement, InputProps>((props, forwardedRef) => {
-  const { onValueChange, ...etc } = props
+  const { onValueChange, type = 'text', ...etc } = props
   const isControlled = props.value != null
   const store = useStore()
   const search = useCmdk((state) => state.search)
@@ -813,7 +815,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, forwardedRe
       aria-labelledby={context.labelId}
       aria-activedescendant={selectedItemId}
       id={context.inputId}
-      type="text"
+      type={type}
       value={isControlled ? props.value : search}
       onChange={(e) => {
         if (!isControlled) {
@@ -822,6 +824,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, forwardedRe
 
         onValueChange?.(e.target.value)
       }}
+
     />
   )
 })
