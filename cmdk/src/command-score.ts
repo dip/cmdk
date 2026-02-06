@@ -148,8 +148,11 @@ function commandScoreInner(
 }
 
 function formatInput(string) {
-  // convert all valid space characters to space so they match each other
-  return string.toLowerCase().replace(COUNT_SPACE_REGEXP, ' ')
+  return string
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(COUNT_SPACE_REGEXP, ' ')
 }
 
 export function commandScore(string: string, abbreviation: string, aliases: string[]): number {

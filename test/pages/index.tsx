@@ -10,7 +10,7 @@ const Page = () => {
           <Command.Item
             keywords={['key']}
             onSelect={() => {
-              ;(window as any).onSelect = 'Item selected'
+              ; (window as any).onSelect = 'Item selected'
             }}
             className="item"
           >
@@ -18,6 +18,9 @@ const Page = () => {
           </Command.Item>
           <Command.Item value="xxx" className="item">
             Value
+          </Command.Item>
+          <Command.Item value="Café" className="item">
+            Café
           </Command.Item>
         </Command.List>
       </Command>
