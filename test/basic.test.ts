@@ -72,4 +72,9 @@ test.describe('basic behavior', async () => {
     await expect(page.locator(`.item`)).toHaveCount(0)
     await expect(page.locator(`.empty`)).toHaveCount(1)
   })
+  test('matches accented characters with ascii input', async ({ page }) => {
+    const input = page.locator('[cmdk-input]')
+    await input.fill('cafe')
+    await expect(page.locator(`[cmdk-item][data-value="Café"]`)).toHaveCount(1)
+  })
 })
