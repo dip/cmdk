@@ -128,6 +128,16 @@ A third argument, `keywords`, can also be provided to the filter function. Keywo
 />
 ```
 
+You can listen for when a search query produces no results with `onEmpty`. Useful for analytics, triggering an AI fallback, or capturing unmet user intent:
+
+```tsx
+<Command
+  onEmpty={(search) => {
+    console.log('No results for', search)
+  }}
+/>
+```
+
 Or disable filtering and sorting entirely:
 
 ```tsx
