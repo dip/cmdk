@@ -41,4 +41,17 @@ test.describe('props', async () => {
     await page.goto('/props?initialValue=anteater')
     await expect(page.locator(`[cmdk-item][aria-selected="true"]`)).toHaveAttribute('data-value', 'anteater')
   })
+
+  test('onEmpty is called when search produces no results', async ({ page }) => {
+    await page.goto('/props')
+    await expect(page.locator(`[data-testid=emptySearch]`)).toHaveText('')
+    await page.locator(`[cmdk-input]`).fill('zzz')
+    await expect(page.locator(`[data-testid=emptySearch]`)).toHaveText('zzz')
+  })
+
+  test('onEmpty is not called when results exist', async ({ page }) => {
+    await page.goto('/props')
+    await page.locator(`[cmdk-input]`).fill('ant')
+    await expect(page.locator(`[data-testid=emptySearch]`)).toHaveText('')
+  })
 })

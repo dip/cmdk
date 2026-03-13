@@ -7,6 +7,7 @@ const Page = () => {
   const [search, setSearch] = React.useState('')
   const [shouldFilter, setShouldFilter] = React.useState(true)
   const [customFilter, setCustomFilter] = React.useState(false)
+  const [emptySearch, setEmptySearch] = React.useState('')
   const router = useRouter()
 
   React.useEffect(() => {
@@ -21,6 +22,7 @@ const Page = () => {
     <div>
       <div data-testid="value">{value}</div>
       <div data-testid="search">{search}</div>
+      <div data-testid="emptySearch">{emptySearch}</div>
 
       <button data-testid="controlledValue" onClick={() => setValue('anteater')}>
         Change value
@@ -33,6 +35,7 @@ const Page = () => {
         shouldFilter={shouldFilter}
         value={value}
         onValueChange={setValue}
+        onEmpty={setEmptySearch}
         filter={
           customFilter
             ? (item: string | undefined, search: string | undefined) => {

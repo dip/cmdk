@@ -118,6 +118,10 @@ type CommandProps = Children &
      * Set to `false` to disable ctrl+n/j/p/k shortcuts. Defaults to `true`.
      */
     vimBindings?: boolean
+    /**
+     * Event handler called when the search query produces no results.
+     */
+    onEmpty?: (search: string) => void
   }
 
 type Context = {
@@ -198,6 +202,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
     loop,
     disablePointerSelection = false,
     vimBindings = true,
+    onEmpty,
     ...etc
   } = props
 
@@ -240,6 +245,12 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
           filterItems()
           sort()
           schedule(1, selectFirstItem)
+
+          // Notify when filtering produces no results
+          const search = value as string
+          if (state.current.filtered.count === 0 && search.trim()) {
+            propsRef.current.onEmpty?.(search)
+          }
         } else if (key === 'value') {
           // Force focus input or root so accessibility works
           if (document.activeElement.hasAttribute('cmdk-input') || document.activeElement.hasAttribute('cmdk-root')) {
