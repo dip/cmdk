@@ -1023,7 +1023,7 @@ function useValue(
           return part.trim()
         }
 
-        if (typeof part === 'object' && 'current' in part) {
+        if (part && typeof part === 'object' && 'current' in part) {
           if (part.current) {
             return part.current.textContent?.trim()
           }
