@@ -469,19 +469,19 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
     state.current.filtered.count = itemCount
   }
 
-  function scrollSelectedIntoView() {
-    const item = getSelectedItem()
+function scrollSelectedIntoView() {
+  const item = getSelectedItem()
+  const list = listInnerRef.current
+  if (!item || !list) return
 
-    if (item) {
-      if (item.parentElement?.firstChild === item) {
-        // First item in Group, ensure heading is in view
-        item.closest(GROUP_SELECTOR)?.querySelector(GROUP_HEADING_SELECTOR)?.scrollIntoView({ block: 'nearest' })
-      }
+  if (list.scrollHeight <= list.clientHeight) return
 
-      // Ensure the item is always in view
-      item.scrollIntoView({ block: 'nearest' })
-    }
+  if (item.parentElement?.firstChild === item) {
+    item.closest(GROUP_SELECTOR)?.querySelector(GROUP_HEADING_SELECTOR)?.scrollIntoView({ block: 'nearest' })
   }
+
+  item.scrollIntoView({ block: 'nearest' })
+}
 
   /** Getters */
 
