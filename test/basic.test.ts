@@ -31,11 +31,29 @@ test.describe('basic behavior', async () => {
     await expect(item).toHaveText('Item')
   })
 
+  test('active descendant points to the initially selected item', async ({ page }) => {
+    const item = page.locator(`[cmdk-item][aria-selected="true"]`)
+    const itemId = await item.getAttribute('id')
+    if (!itemId) throw new Error('Expected selected item to have an id')
+    await expect(page.locator(`[cmdk-input]`)).toHaveAttribute('aria-activedescendant', itemId)
+    await expect(page.locator(`[cmdk-list]`)).toHaveAttribute('aria-activedescendant', itemId)
+  })
+
   test('first item is selected when search changes', async ({ page }) => {
     const input = page.locator(`[cmdk-input]`)
     await input.type('x')
     const selected = page.locator(`[cmdk-item][aria-selected="true"]`)
     await expect(selected).toHaveText('Value')
+  })
+
+  test('active descendant updates when search selects a new item', async ({ page }) => {
+    const input = page.locator(`[cmdk-input]`)
+    await input.type('x')
+    const selected = page.locator(`[cmdk-item][aria-selected="true"]`)
+    const selectedId = await selected.getAttribute('id')
+    if (!selectedId) throw new Error('Expected selected item to have an id')
+    await expect(input).toHaveAttribute('aria-activedescendant', selectedId)
+    await expect(page.locator(`[cmdk-list]`)).toHaveAttribute('aria-activedescendant', selectedId)
   })
 
   test('items filter when searching', async ({ page }) => {
