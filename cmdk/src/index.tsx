@@ -214,6 +214,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
     if (value !== undefined) {
       const v = value.trim()
       state.current.value = v
+      state.current.selectedItemId = getItemIdByValue(v)
       store.emit()
     }
   }, [value])
@@ -241,17 +242,14 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
           sort()
           schedule(1, selectFirstItem)
         } else if (key === 'value') {
+          state.current.selectedItemId = getItemIdByValue((value ?? '') as string)
+
           // Force focus input or root so accessibility works
           if (document.activeElement.hasAttribute('cmdk-input') || document.activeElement.hasAttribute('cmdk-root')) {
             const input = document.getElementById(inputId)
             if (input) input.focus()
             else document.getElementById(listId)?.focus()
           }
-
-          schedule(7, () => {
-            state.current.selectedItemId = getSelectedItem()?.id
-            store.emit()
-          })
 
           // opts is a boolean referring to whether it should NOT be scrolled into view
           if (!opts) {
@@ -282,6 +280,9 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
         if (value !== ids.current.get(id)?.value) {
           ids.current.set(id, { value, keywords })
           state.current.filtered.items.set(id, score(value, keywords))
+          if (state.current.value === value) {
+            state.current.selectedItemId = id
+          }
           schedule(2, () => {
             sort()
             store.emit()
@@ -319,7 +320,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
           ids.current.delete(id)
           allItems.current.delete(id)
           state.current.filtered.items.delete(id)
-          const selectedItem = getSelectedItem()
+          const selectedItemId = state.current.selectedItemId
 
           // Batch this, multiple items could be removed in one pass
           schedule(4, () => {
@@ -327,7 +328,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
 
             // The item removed have been the selected one,
             // so selection should be moved to the first
-            if (selectedItem?.getAttribute('id') === id) selectFirstItem()
+            if (selectedItemId === id) selectFirstItem()
 
             store.emit()
           })
@@ -487,6 +488,10 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
 
   function getSelectedItem() {
     return listInnerRef.current?.querySelector(`${ITEM_SELECTOR}[aria-selected="true"]`)
+  }
+
+  function getItemIdByValue(value: string) {
+    return Array.from(ids.current).find(([, item]) => item.value === value)?.[0]
   }
 
   function getValidItems() {
