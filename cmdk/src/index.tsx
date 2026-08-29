@@ -205,6 +205,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
   const labelId = useId()
   const inputId = useId()
 
+  const rootRef = React.useRef<HTMLDivElement>(null)
   const listInnerRef = React.useRef<HTMLDivElement>(null)
 
   const schedule = useScheduleLayoutEffect()
@@ -242,7 +243,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
           schedule(1, selectFirstItem)
         } else if (key === 'value') {
           // Force focus input or root so accessibility works
-          if (document.activeElement.hasAttribute('cmdk-input') || document.activeElement.hasAttribute('cmdk-root')) {
+          if (document.activeElement === rootRef.current) {
             const input = document.getElementById(inputId)
             if (input) input.focus()
             else document.getElementById(listId)?.focus()
@@ -572,7 +573,7 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
 
   return (
     <Primitive.div
-      ref={forwardedRef}
+      ref={composeRefs(rootRef, forwardedRef)}
       tabIndex={-1}
       {...etc}
       cmdk-root=""
