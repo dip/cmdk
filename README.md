@@ -22,8 +22,6 @@ const CommandMenu = () => {
     <Command label="Command Menu">
       <Command.Input />
       <Command.List>
-        <Command.Empty>No results found.</Command.Empty>
-
         <Command.Group heading="Letters">
           <Command.Item>a</Command.Item>
           <Command.Item>b</Command.Item>
@@ -33,6 +31,7 @@ const CommandMenu = () => {
 
         <Command.Item>Apple</Command.Item>
       </Command.List>
+      <Command.Empty>No results found.</Command.Empty>
     </Command>
   )
 }
@@ -63,8 +62,6 @@ const CommandMenu = () => {
     <Command.Dialog open={open} onOpenChange={setOpen} label="Global Command Menu">
       <Command.Input />
       <Command.List>
-        <Command.Empty>No results found.</Command.Empty>
-
         <Command.Group heading="Letters">
           <Command.Item>a</Command.Item>
           <Command.Item>b</Command.Item>
@@ -74,6 +71,7 @@ const CommandMenu = () => {
 
         <Command.Item>Apple</Command.Item>
       </Command.List>
+      <Command.Empty>No results found.</Command.Empty>
     </Command.Dialog>
   )
 }
@@ -260,6 +258,10 @@ Visible when the search query is empty or `alwaysRender` is true, hidden otherwi
 ### Empty `[cmdk-empty]`
 
 Automatically renders when there are no results for the search query.
+
+Place it outside `Command.List`, as a sibling. The list has `role="listbox"`, so empty-state text inside it is not a valid option and fails the `aria-required-children` accessibility rule.
+
+The empty state is outside the list's scrolling area and is not included in `--cmdk-list-height`. Style `[cmdk-empty]` separately, or wrap the list and empty state in a shared container when they need the same border or background.
 
 ### Loading `[cmdk-loading]`
 
