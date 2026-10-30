@@ -6,7 +6,6 @@ const Page = () => {
       <Command className="root">
         <Command.Input placeholder="Search…" className="input" />
         <Command.List className="list">
-          <Command.Empty className="empty">No results.</Command.Empty>
           <Command.Item
             keywords={['key']}
             onSelect={() => {
@@ -20,6 +19,7 @@ const Page = () => {
             Value
           </Command.Item>
         </Command.List>
+        <Command.Empty className="empty">No results.</Command.Empty>
       </Command>
     </div>
   )
