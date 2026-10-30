@@ -8,6 +8,7 @@
     "testsite": "pnpm -F cmdk-tests dev",
     "format": "prettier '**/*.{js,jsx,ts,tsx,json,md,mdx,css,scss,yaml,yml}' --write",
     "preinstall": "npx only-allow pnpm",
+    "test:types": "tsc --project test/types/tsconfig.json && tsc --project test/types/tsconfig.json --exactOptionalPropertyTypes false",
     "test:format": "prettier '**/*.{js,jsx,ts,tsx,json,md,mdx,css,scss,yaml,yml}' --check",
     "test": "playwright test"
   },
@@ -19,7 +20,7 @@
     "tsup": "8.0.1",
     "typescript": "4.6.4"
   },
-  "packageManager": "pnpm@8.8.0",
+  "packageManager": "pnpm@10.13.1",
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx,json,md,mdx,css,scss,yaml,yml}": [
       "prettier --write"

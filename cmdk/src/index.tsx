@@ -9,72 +9,73 @@ import { composeRefs } from '@radix-ui/react-compose-refs'
 
 type Children = { children?: React.ReactNode }
 type DivProps = React.ComponentPropsWithoutRef<typeof Primitive.div>
+type ValueChangeHandler = (value: string) => void
 
 type LoadingProps = Children &
   DivProps & {
     /** Estimated progress of loading asynchronous options. */
-    progress?: number
+    progress?: number | undefined
     /**
      * Accessible label for this loading progressbar. Not shown visibly.
      */
-    label?: string
+    label?: string | undefined
   }
 
 type EmptyProps = Children & DivProps & {}
 type SeparatorProps = DivProps & {
   /** Whether this separator should always be rendered. Useful if you disable automatic filtering. */
-  alwaysRender?: boolean
+  alwaysRender?: boolean | undefined
 }
 type DialogProps = RadixDialog.DialogProps &
   CommandProps & {
     /** Provide a className to the Dialog overlay. */
-    overlayClassName?: string
+    overlayClassName?: string | undefined
     /** Provide a className to the Dialog content. */
-    contentClassName?: string
+    contentClassName?: string | undefined
     /** Provide a custom element the Dialog should portal into. */
-    container?: HTMLElement
+    container?: HTMLElement | undefined
   }
 type ListProps = Children &
   DivProps & {
     /**
      * Accessible label for this List of suggestions. Not shown visibly.
      */
-    label?: string
+    label?: string | undefined
   }
 type ItemProps = Children &
   Omit<DivProps, 'disabled' | 'onSelect' | 'value'> & {
     /** Whether this item is currently disabled. */
-    disabled?: boolean
+    disabled?: boolean | undefined
     /** Event handler for when this item is selected, either via click or keyboard selection. */
-    onSelect?: (value: string) => void
+    onSelect?: ValueChangeHandler | undefined
     /**
      * A unique value for this item.
      * If no value is provided, it will be inferred from `children` or the rendered `textContent`. If your `textContent` changes between renders, you _must_ provide a stable, unique `value`.
      */
-    value?: string
+    value?: string | undefined
     /** Optional keywords to match against when filtering. */
-    keywords?: string[]
+    keywords?: string[] | undefined
     /** Whether this item is forcibly rendered regardless of filtering. */
-    forceMount?: boolean
+    forceMount?: boolean | undefined
   }
 type GroupProps = Children &
   Omit<DivProps, 'heading' | 'value'> & {
     /** Optional heading to render for this group. */
     heading?: React.ReactNode
     /** If no heading is provided, you must provide a value that is unique for this group. */
-    value?: string
+    value?: string | undefined
     /** Whether this group is forcibly rendered regardless of filtering. */
-    forceMount?: boolean
+    forceMount?: boolean | undefined
   }
 type InputProps = Omit<React.ComponentPropsWithoutRef<typeof Primitive.input>, 'value' | 'onChange' | 'type'> & {
   /**
    * Optional controlled state for the value of the search input.
    */
-  value?: string
+  value?: string | undefined
   /**
    * Event handler called when the search value changes.
    */
-  onValueChange?: (search: string) => void
+  onValueChange?: ValueChangeHandler | undefined
 }
 type CommandFilter = (value: string, search: string, keywords?: string[]) => number
 type CommandProps = Children &
@@ -82,42 +83,42 @@ type CommandProps = Children &
     /**
      * Accessible label for this command menu. Not shown visibly.
      */
-    label?: string
+    label?: string | undefined
     /**
      * Optionally set to `false` to turn off the automatic filtering and sorting.
      * If `false`, you must conditionally render valid items based on the search query yourself.
      */
-    shouldFilter?: boolean
+    shouldFilter?: boolean | undefined
     /**
      * Custom filter function for whether each command menu item should matches the given search query.
      * It should return a number between 0 and 1, with 1 being the best match and 0 being hidden entirely.
      * By default, uses the `command-score` library.
      */
-    filter?: CommandFilter
+    filter?: CommandFilter | undefined
     /**
      * Optional default item value when it is initially rendered.
      */
-    defaultValue?: string
+    defaultValue?: string | undefined
     /**
      * Optional controlled state of the selected command menu item.
      */
-    value?: string
+    value?: string | undefined
     /**
      * Event handler called when the selected item of the menu changes.
      */
-    onValueChange?: (value: string) => void
+    onValueChange?: ValueChangeHandler | undefined
     /**
      * Optionally set to `true` to turn on looping around when using the arrow keys.
      */
-    loop?: boolean
+    loop?: boolean | undefined
     /**
      * Optionally set to `true` to disable selection via pointer events.
      */
-    disablePointerSelection?: boolean
+    disablePointerSelection?: boolean | undefined
     /**
      * Set to `false` to disable ctrl+n/j/p/k shortcuts. Defaults to `true`.
      */
-    vimBindings?: boolean
+    vimBindings?: boolean | undefined
   }
 
 type Context = {

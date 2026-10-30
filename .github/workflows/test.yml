@@ -24,6 +24,7 @@ jobs:
           CI: true
 
       - run: pnpm build
+      - run: pnpm test:types
       - run: pnpm test:format
       - run: pnpm playwright install --with-deps
       - run: pnpm test || exit 1
