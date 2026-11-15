@@ -25,4 +25,19 @@ test.describe('scroll selected item into view', async () => {
     // parked at the stale "item-49" position near the bottom.
     await expect.poll(() => list.evaluate((el) => el.scrollTop)).toBeLessThan(30)
   })
+
+  test('scrolls to the new first item after narrowing the search', async ({ page }) => {
+    const input = page.locator('[cmdk-input]')
+    const list = page.locator('[cmdk-list]')
+
+    // Select the last item; the list scrolls to the bottom.
+    await input.focus()
+    await page.keyboard.press('End')
+    await expect(page.locator('[cmdk-item][aria-selected="true"]')).toHaveAttribute('data-value', 'item-49')
+
+    // "item-40" to "item-49" match best; "item-49" stays visible but is no longer first.
+    await input.fill('item-4')
+    await expect(page.locator('[cmdk-item][aria-selected="true"]')).toHaveAttribute('data-value', 'item-40')
+    await expect.poll(() => list.evaluate((el) => el.scrollTop)).toBeLessThan(30)
+  })
 })
