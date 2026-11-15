@@ -238,8 +238,11 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
         if (key === 'search') {
           // Filter synchronously before emitting back to children
           filterItems()
-          sort()
-          schedule(1, selectFirstItem)
+          // Sort once items that match again have been rendered back into the DOM
+          schedule(1, () => {
+            sort()
+            selectFirstItem()
+          })
         } else if (key === 'value') {
           // Force focus input or root so accessibility works
           if (document.activeElement.hasAttribute('cmdk-input') || document.activeElement.hasAttribute('cmdk-root')) {

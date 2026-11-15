@@ -73,3 +73,23 @@ test.describe('basic behavior', async () => {
     await expect(page.locator(`.empty`)).toHaveCount(1)
   })
 })
+
+test.describe('broadened search', async () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/keybinds')
+  })
+
+  test('items shown again by a broader search are sorted', async ({ page }) => {
+    const input = page.locator(`[cmdk-input]`)
+    await expect(page.locator(`[cmdk-item][aria-selected="true"]`)).toHaveAttribute('data-value', 'first')
+
+    // Only "Pear" matches; "Apple" is hidden
+    await input.fill('pear')
+    await expect(page.locator(`[cmdk-item]`)).toHaveText(['Pear'])
+
+    // "Apple" matches again, but "Pear" is the better match
+    await input.fill('p')
+    await expect(page.locator(`[cmdk-item]`)).toHaveText(['Pear', 'Apple'])
+    await expect(page.locator(`[cmdk-item][aria-selected="true"]`)).toHaveText('Pear')
+  })
+})
