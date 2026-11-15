@@ -24,4 +24,13 @@ test.describe('group', async () => {
     await page.locator(`[cmdk-input]`).type('Giraffe')
     await expect(page.locator(`[cmdk-group][data-value="Letters"]`)).toBeVisible()
   })
+
+  test('groups are sorted by their best matching item', async ({ page }) => {
+    await expect(page.locator(`[cmdk-item][aria-selected="true"]`)).toHaveText('Giraffe')
+    // "A" (Letters) matches `a` far better than "Giraffe" (Animals)
+    await page.locator(`[cmdk-input]`).type('a')
+    await expect(page.locator(`[cmdk-group]:not([hidden])`)).toHaveCount(2)
+    await expect(page.locator(`[cmdk-group]:not([hidden])`).first()).toHaveAttribute('data-value', 'Letters')
+    await expect(page.locator(`[cmdk-item][aria-selected="true"]`)).toHaveText('A')
+  })
 })
