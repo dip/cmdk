@@ -70,3 +70,22 @@ test.describe('item advanced', async () => {
     await expect(page.locator(`[cmdk-item]`)).toHaveCount(2)
   })
 })
+
+test.describe('disabled item', async () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/keybinds')
+  })
+
+  test('disabled items are sorted by score with the other items', async ({ page }) => {
+    await expect(page.locator(`[cmdk-item][aria-selected="true"]`)).toHaveAttribute('data-value', 'first')
+    await page.locator(`[cmdk-input]`).type('a')
+    await expect(page.locator(`[cmdk-item][data-value="first"]`)).toHaveCount(0)
+    await expect(page.locator(`[cmdk-group][data-value="Fruits"] [cmdk-item]`)).toHaveText([
+      'Apple',
+      'Banana',
+      'Orange',
+      'Dragon Fruit',
+      'Pear',
+    ])
+  })
+})

@@ -396,8 +396,8 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
     // Sort groups to bottom (pushes all non-grouped items to the top)
     const listInsertionElement = listInnerRef.current
 
-    // Sort the items
-    getValidItems()
+    // Sort the items, including disabled ones: unsorted items would stay above the sorted ones
+    Array.from(listInnerRef.current?.querySelectorAll(ITEM_SELECTOR) || [])
       .sort((a, b) => {
         const valueA = a.getAttribute('id')
         const valueB = b.getAttribute('id')
