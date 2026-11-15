@@ -470,7 +470,13 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
   }
 
   function scrollSelectedIntoView() {
-    const item = getSelectedItem()
+    // Resolve the selected item from `state.current.value` (the source of truth)
+    // rather than `getSelectedItem()`, which reads `[aria-selected="true"]`. On a
+    // search change the newly-selected item is already in the DOM, but its
+    // `aria-selected` attribute only flips on the next React commit, so scrolling
+    // by that attribute lands on the previously-selected item (#389). The item's
+    // `data-value` already matches the new selection, so resolve by that instead.
+    const item = getSelectedItemByValue()
 
     if (item) {
       if (item.parentElement?.firstChild === item) {
@@ -487,6 +493,20 @@ const Command = React.forwardRef<HTMLDivElement, CommandProps>((props, forwarded
 
   function getSelectedItem() {
     return listInnerRef.current?.querySelector(`${ITEM_SELECTOR}[aria-selected="true"]`)
+  }
+
+  /**
+   * Resolve the selected item element from `state.current.value` instead of the
+   * `aria-selected` attribute, which lags one React commit behind a value change
+   * (see `scrollSelectedIntoView`). Comparing `data-value` in JS rather than via a
+   * built selector also avoids escaping arbitrary values into `querySelector` (#387).
+   */
+  function getSelectedItemByValue() {
+    const value = state.current.value
+    if (!value) return undefined
+    return Array.from(listInnerRef.current?.querySelectorAll(ITEM_SELECTOR) || []).find(
+      (item) => item.getAttribute(VALUE_ATTR) === value,
+    )
   }
 
   function getValidItems() {
