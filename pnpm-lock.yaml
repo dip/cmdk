@@ -11,6 +11,9 @@ importers:
       '@playwright/test':
         specifier: 1.51.0
         version: 1.51.0
+      esbuild:
+        specifier: 0.19.12
+        version: 0.19.12
       husky:
         specifier: ^8.0.1
         version: 8.0.1

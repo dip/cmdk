@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@playwright/test": "1.51.0",
+    "esbuild": "0.19.12",
     "husky": "^8.0.1",
     "lint-staged": "15.2.0",
     "prettier": "2.7.1",

@@ -2,7 +2,11 @@ import { defineConfig } from 'tsup'
 
 export default defineConfig({
   sourcemap: false,
-  minify: true,
+  esbuildOptions(options) {
+    // Whitespace minification removes pure annotations needed by downstream bundlers.
+    options.minifyIdentifiers = true
+    options.minifySyntax = true
+  },
   dts: true,
   format: ['esm', 'cjs'],
   loader: {
