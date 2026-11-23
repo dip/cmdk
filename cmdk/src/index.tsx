@@ -879,7 +879,7 @@ const List = React.forwardRef<HTMLDivElement, ListProps>((props, forwardedRef) =
 /**
  * Renders the command menu in a Radix Dialog.
  */
-const Dialog = React.forwardRef<HTMLDivElement, DialogProps>((props, forwardedRef) => {
+const Dialog = /* @__PURE__ */ React.forwardRef<HTMLDivElement, DialogProps>((props, forwardedRef) => {
   const { open, onOpenChange, overlayClassName, contentClassName, container, ...etc } = props
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
@@ -927,7 +927,7 @@ const Loading = React.forwardRef<HTMLDivElement, LoadingProps>((props, forwarded
   )
 })
 
-const pkg = Object.assign(Command, {
+const pkg = /* @__PURE__ */ Object.assign(Command, {
   List,
   Item,
   Input,
